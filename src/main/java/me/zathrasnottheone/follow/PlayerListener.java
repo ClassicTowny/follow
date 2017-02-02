@@ -75,6 +75,28 @@ public class PlayerListener implements Listener {
    )
    public void onPlayerMove(PlayerMoveEvent e) {
       this.onMovement(e);
+      if(FollowConfig.getInstance().isRotateHead()) {
+	      FollowRoster roster = FollowRoster.getInstance();
+	      Player player = e.getPlayer();
+	      Set<Stalker> stalkers = null;
+	      stalkers = roster.getStalkersForSuspect(player);
+	      if(!stalkers.isEmpty()) {
+		      Player stalkingPlayer = null;
+		
+		      assert stalkers != null;
+		
+		      Iterator<Stalker> iterator = stalkers.iterator();
+		
+		      while(iterator.hasNext()) {
+		         Stalker s = (Stalker)iterator.next();
+		         stalkingPlayer = Bukkit.getPlayer(s.getName());
+		         if(stalkingPlayer != null) {
+		             Location to = e.getTo();
+		             this.rotateStalker(stalkingPlayer, player, to);
+		         }
+		      }
+	      }
+      }
    }
 
    @EventHandler(
@@ -121,12 +143,13 @@ public class PlayerListener implements Listener {
             if(s.isCooledDown(FollowConfig.getInstance().getCoolDown())) {
                if(this.moveStalker(stalkingPlayer, suspectPlayer, s.getDistance(), to)) {
                   s.heatUp();
+                  if(FollowConfig.getInstance().isRotateHead()) {
+                      this.rotateStalker(stalkingPlayer, suspectPlayer, to);
+                  }
                   if(s.getAge() % 60 == 0) {
                      this._logger.info(s.getName() + " has been following " + s.getSuspectName() + " for " + s.getAge() / 60 + " minutes.");
                   }
                }
-            } else if(FollowConfig.getInstance().isRotateHead()) {
-               this.rotateStalker(stalkingPlayer, suspectPlayer, to);
             }
          }
       }

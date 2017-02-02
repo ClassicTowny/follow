@@ -6,7 +6,7 @@
 
     <groupId>me.zathrasnottheone.follow</groupId>
     <artifactId>Follow</artifactId>
-    <version>0.7-alpha</version>
+    <version>0.7-beta1</version>
     <name>Follow</name>
 
     <!-- Properties -->

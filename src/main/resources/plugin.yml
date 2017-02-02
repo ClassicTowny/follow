@@ -1,6 +1,6 @@
 name: Follow
 main: me.zathrasnottheone.follow.Follow
-version: 0.7-alpha
+version: 0.7-beta1
 author: ZathrasNotTheOne
 website: http://dev.bukkit.org/server-mods/follow/
 prefix: Follow

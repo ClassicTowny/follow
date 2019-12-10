@@ -7,9 +7,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class FollowConfig {
    private static final FollowConfig _instance = new FollowConfig();
    public final int _defaultFollowDistance = 8;
-   public final int _defaultCoolDown = 3;
-   public final double _defaultSignificantDistance = 0.21D;
+   public final int _defaultCoolDown = 2;
    public final boolean _defaultRotateHead = false;
+   public final boolean _defaultSuspectCanFollow = true;
    private Follow _plugin = null;
    private Logger _logger = null;
    private FileConfiguration _config = null;
@@ -32,15 +32,15 @@ public class FollowConfig {
    }
 
    public int getCoolDown() {
-      return this._config.getInt("coolDown", 3);
-   }
-
-   public double getSignificantDistance() {
-      return this._config.getDouble("significantDistance", 0.21D);
+      return this._config.getInt("coolDown", 2);
    }
 
    public boolean isRotateHead() {
       return this._config.getBoolean("rotateHead", false);
+   }
+   
+   public boolean isSuspectCanFollow() {
+	   return this._config.getBoolean("suspectCanFollow", true);
    }
 
    public void saveConfig() {

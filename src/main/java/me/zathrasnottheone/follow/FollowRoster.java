@@ -3,25 +3,28 @@ package me.zathrasnottheone.follow;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.UUID;
+
 import me.zathrasnottheone.follow.Stalker;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class FollowRoster {
    private static final FollowRoster instance = new FollowRoster();
-   private static HashMap<String, Stalker> ROSTER = new HashMap<String, Stalker>();
+   private static HashMap<UUID, Stalker> ROSTER = new HashMap<UUID, Stalker>();
 
    public static FollowRoster getInstance() {
       return instance;
    }
 
    public HashSet<Stalker> getStalkersForSuspect(Player suspect) {
-      Iterator<String> iterator = ROSTER.keySet().iterator();
+      Iterator<UUID> iterator = ROSTER.keySet().iterator();
       HashSet<Stalker> stalkers = new HashSet<Stalker>();
 
       while(iterator.hasNext()) {
          Stalker s = (Stalker)ROSTER.get(iterator.next());
-         if(suspect.getName().equalsIgnoreCase(s.getSuspectName())) {
+         if(suspect.getUniqueId().equals(s.getSuspectUUID())) {
             stalkers.add(s);
          }
       }
@@ -29,13 +32,13 @@ public class FollowRoster {
       return stalkers;
    }
 
-   public Stalker getStalker(String stalkerName) {
-      Iterator<String> iterator = ROSTER.keySet().iterator();
+   public Stalker getStalker(UUID stalkerUUID) {
+      Iterator<UUID> iterator = ROSTER.keySet().iterator();
       Stalker stalker = null;
 
       while(iterator.hasNext() && stalker == null) {
          Stalker s = (Stalker)ROSTER.get(iterator.next());
-         if(stalkerName.equalsIgnoreCase(s.getName())) {
+         if(stalkerUUID.equals(s.getUUID())) {
             stalker = s;
          }
       }
@@ -44,11 +47,11 @@ public class FollowRoster {
    }
 
    public void follow(Player stalker, Player suspect, int distance) {
-      ROSTER.put(stalker.getName(), new Stalker(stalker.getName(), suspect.getName(), distance));
+      ROSTER.put(stalker.getUniqueId(), new Stalker(stalker.getUniqueId(), suspect.getUniqueId(), distance));
    }
 
    public Stalker unfollow(Player stalker) {
-      return (Stalker)ROSTER.remove(stalker.getName());
+      return (Stalker)ROSTER.remove(stalker.getUniqueId());
    }
 
    public int getSize() {
@@ -57,13 +60,13 @@ public class FollowRoster {
 
    public String[] toStringArray() {
       String[] result = new String[ROSTER.size() + 2];
-      Iterator<String> iterator = ROSTER.keySet().iterator();
+      Iterator<UUID> iterator = ROSTER.keySet().iterator();
       byte i = 0;
       int var6 = i + 1;
 
       Stalker value;
-      for(result[i] = ChatColor.GOLD + "===== Follow List ======"; iterator.hasNext(); result[var6++] = ChatColor.GOLD + "• " + ChatColor.RED + value.getName() + ChatColor.GOLD + " is following " + ChatColor.WHITE + value.getSuspectName() + ChatColor.GOLD + " at distance " + ChatColor.AQUA + value.getDistance()) {
-         String key = (String)iterator.next();
+      for(result[i] = ChatColor.GOLD + "===== Follow List ======"; iterator.hasNext(); result[var6++] = ChatColor.GOLD + "• " + ChatColor.RED + Follow.getFetch().getName(value.getUUID()) + ChatColor.GOLD + " is following " + ChatColor.WHITE + Follow.getFetch().getName(value.getSuspectUUID()) + ChatColor.GOLD + " at distance " + ChatColor.AQUA + value.getDistance()) {
+         UUID key = (UUID)iterator.next();
          value = (Stalker)ROSTER.get(key);
       }
 
@@ -77,23 +80,23 @@ public class FollowRoster {
    }
 
    private void removeStalkersForSuspect(Player suspect) {
-      Iterator<String> iterator = ROSTER.keySet().iterator();
+      Iterator<UUID> iterator = ROSTER.keySet().iterator();
 
       while(iterator.hasNext()) {
          Stalker s = (Stalker)ROSTER.get(iterator.next());
-         if(suspect.getName().equalsIgnoreCase(s.getSuspectName())) {
-            ROSTER.remove(s.getName());
+         if(suspect.getUniqueId().equals(s.getSuspectUUID())) {
+            ROSTER.remove(s.getUUID());
          }
       }
 
    }
 
-   public boolean isSuspect(String suspectName) {
-      Iterator<String> iterator = ROSTER.keySet().iterator();
+   public boolean isSuspect(UUID suspectUUID) {
+      Iterator<UUID> iterator = ROSTER.keySet().iterator();
 
       while(iterator.hasNext()) {
          Stalker s = (Stalker)ROSTER.get(iterator.next());
-         if(suspectName == s.getSuspectName()) {
+         if(suspectUUID == s.getSuspectUUID()) {
             return true;
          }
       }

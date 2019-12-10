@@ -9,7 +9,11 @@ import me.zathrasnottheone.follow.Follow;
 import me.zathrasnottheone.follow.FollowConfig;
 import me.zathrasnottheone.follow.FollowRoster;
 import me.zathrasnottheone.follow.Stalker;
+import me.drkmatr1984.customevents.moveEvents.SignificantPlayerMoveEvent;
+import me.zathrasnottheone.follow.BlockTypes.*;
+
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -18,7 +22,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
@@ -31,38 +34,24 @@ public class PlayerListener implements Listener {
    private static final List<Material> HEIGHT_AND_HALF = new ArrayList<Material>();
 
    static {
-      SAFE_TO_SHARE.add(Material.RED_MUSHROOM);
-      SAFE_TO_SHARE.add(Material.BROWN_MUSHROOM);
-      SAFE_TO_SHARE.add(Material.SNOW);
-      SAFE_TO_SHARE.add(Material.SAPLING);
-      SAFE_TO_SHARE.add(Material.TORCH);
-      SAFE_TO_SHARE.add(Material.REDSTONE);
-      SAFE_TO_SHARE.add(Material.RED_ROSE);
-      SAFE_TO_SHARE.add(Material.YELLOW_FLOWER);
-      SAFE_TO_SHARE.add(Material.WHEAT);
-      SAFE_TO_SHARE.add(Material.PUMPKIN_STEM);
-      SAFE_TO_SHARE.add(Material.WATER_LILY);
-      SAFE_TO_SHARE.add(Material.MELON_STEM);
-      SAFE_TO_SHARE.add(Material.SUGAR_CANE);
-      SAFE_TO_SHARE.add(Material.DEAD_BUSH);
-      SAFE_TO_SHARE.add(Material.LONG_GRASS);
-      SAFE_TO_SHARE.add(Material.SIGN);
-      SAFE_TO_SHARE.add(Material.SIGN_POST);
-      SAFE_TO_SHARE.add(Material.STONE_BUTTON);
-      SAFE_TO_SHARE.add(Material.LEVER);
-      SAFE_TO_SHARE.add(Material.RAILS);
-      SAFE_TO_SHARE.add(Material.WOOD_PLATE);
-      SAFE_TO_SHARE.add(Material.STONE_PLATE);
-      DONT_STAND_ON.add(Material.WATER);
-      DONT_STAND_ON.add(Material.LAVA);
-      DONT_STAND_ON.add(Material.FIRE);
-      DONT_STAND_ON.add(Material.CACTUS);
-      DONT_STAND_ON.add(Material.STATIONARY_LAVA);
-      DONT_STAND_ON.add(Material.STATIONARY_WATER);
-      HALF_HEIGHT.add(Material.STEP);
-      HALF_HEIGHT.add(Material.BED);
-      HEIGHT_AND_HALF.add(Material.FENCE);
-      HEIGHT_AND_HALF.add(Material.FENCE_GATE);
+      // Safe to stand on these
+	  for(SafetoWalk safe : BlockTypes.SafetoWalk.values())
+	      SAFE_TO_SHARE.add(Material.getMaterial(safe.toString().toUpperCase()));
+      // Don't stand on these
+      for(Hazards hazard : BlockTypes.Hazards.values())
+          DONT_STAND_ON.add(Material.getMaterial(hazard.toString().toUpperCase()));
+      
+      // Half-Height (Slabs and such)
+      for(Slabs slab : BlockTypes.Slabs.values())
+    	  HALF_HEIGHT.add(Material.getMaterial(slab.toString().toUpperCase()));
+      for(Beds bed : BlockTypes.Beds.values())
+    	  HALF_HEIGHT.add(Material.getMaterial(bed.toString().toUpperCase()));
+      
+      //Height-and-a-half
+      for(Fences fences : BlockTypes.Fences.values())
+          HEIGHT_AND_HALF.add(Material.getMaterial(fences.toString().toUpperCase()));
+      for(Gates gates : BlockTypes.Gates.values())  
+          HEIGHT_AND_HALF.add(Material.getMaterial(gates.toString().toUpperCase()));
    }
 
    public PlayerListener(Follow follow) {
@@ -70,11 +59,9 @@ public class PlayerListener implements Listener {
       this._logger = this._plugin.getLogger();
    }
 
-   @EventHandler(
-      priority = EventPriority.LOW
-   )
-   public void onPlayerMove(PlayerMoveEvent e) {
-      this.onMovement(e);
+   @EventHandler(priority = EventPriority.LOW)
+   public void onPlayerMove(SignificantPlayerMoveEvent e) {
+      this.onMovement(e.getPlayer(), e.getFrom(), e.getTo());
       if(FollowConfig.getInstance().isRotateHead()) {
 	      FollowRoster roster = FollowRoster.getInstance();
 	      Player player = e.getPlayer();
@@ -89,7 +76,7 @@ public class PlayerListener implements Listener {
 		
 		      while(iterator.hasNext()) {
 		         Stalker s = (Stalker)iterator.next();
-		         stalkingPlayer = Bukkit.getPlayer(s.getName());
+		         stalkingPlayer = Bukkit.getPlayer(s.getUUID());
 		         if(stalkingPlayer != null) {
 		             Location to = e.getTo();
 		             this.rotateStalker(stalkingPlayer, player, to);
@@ -99,36 +86,32 @@ public class PlayerListener implements Listener {
       }
    }
 
-   @EventHandler(
-      priority = EventPriority.LOW
-   )
+   @EventHandler(priority = EventPriority.LOW)
    public void onPlayerTeleport(PlayerTeleportEvent e) {
-      this.onMovement(e);
+      this.onMovement(e.getPlayer(), e.getFrom(), e.getTo());
    }
 
-   @EventHandler(
-      priority = EventPriority.LOW
-   )
+   @EventHandler(priority = EventPriority.HIGHEST)
    public void onPlayerLogout(PlayerQuitEvent e) {
+      if(!FollowRoster.getInstance().getStalkersForSuspect(e.getPlayer()).isEmpty())
+    	  for(Stalker stalker : FollowRoster.getInstance().getStalkersForSuspect(e.getPlayer()))
+    		  Bukkit.getPlayer(stalker.getUUID()).sendMessage(ChatColor.GOLD + "You are no longer following " + ChatColor.WHITE + e.getPlayer().getName());
       FollowRoster.getInstance().remove(e.getPlayer());
    }
 
-   private void onMovement(PlayerMoveEvent e) {
+   private void onMovement(Player player, Location from, Location to) {
+	  
       FollowRoster roster = FollowRoster.getInstance();
-      Player player = e.getPlayer();
       Set<Stalker> stalkers = null;
       stalkers = roster.getStalkersForSuspect(player);
       if(!stalkers.isEmpty()) {
-         Location from = e.getFrom();
-         Location to = e.getTo();
-         if(!from.getWorld().equals(to.getWorld()) || from.distance(to) > FollowConfig.getInstance().getSignificantDistance()) {
+         if(!from.getWorld().equals(to.getWorld()) || from.distance(to) > 0.21D) {
             this.updateStalkers(stalkers, player, to);
          }
 
       }
    }
 
-   @SuppressWarnings("deprecation")
    private void updateStalkers(Set<Stalker> stalkers, Player suspectPlayer, Location to) {
       Player stalkingPlayer = null;
 
@@ -138,7 +121,7 @@ public class PlayerListener implements Listener {
 
       while(iterator.hasNext()) {
          Stalker s = (Stalker)iterator.next();
-         stalkingPlayer = Bukkit.getPlayer(s.getName());
+         stalkingPlayer = Bukkit.getPlayer(s.getUUID());
          if(stalkingPlayer != null) {
             if(s.isCooledDown(FollowConfig.getInstance().getCoolDown())) {
                if(this.moveStalker(stalkingPlayer, suspectPlayer, s.getDistance(), to)) {
@@ -147,7 +130,7 @@ public class PlayerListener implements Listener {
                       this.rotateStalker(stalkingPlayer, suspectPlayer, to);
                   }
                   if(s.getAge() % 60 == 0) {
-                     this._logger.info(s.getName() + " has been following " + s.getSuspectName() + " for " + s.getAge() / 60 + " minutes.");
+                     this._logger.info(Bukkit.getOfflinePlayer(s.getUUID()) + " has been following " + (Bukkit.getOfflinePlayer(s.getSuspectUUID())).getName() + " for " + s.getAge() / 60 + " minutes.");
                   }
                }
             }
@@ -280,4 +263,5 @@ public class PlayerListener implements Listener {
       boolean safe = (bottom.isEmpty() || SAFE_TO_SHARE.contains(bottomMaterial)) && (top.isEmpty() || SAFE_TO_SHARE.contains(topMaterial));
       return safe;
    }
+   
 }

@@ -1,27 +1,30 @@
 package me.zathrasnottheone.follow;
 
 import me.zathrasnottheone.follow.FollowConfig;
+
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 
 public class Stalker {
    private int _maxDistance = Bukkit.getServer().getViewDistance() * 16 / 2;
-   private String _name = null;
-   private String _suspect = null;
+   private UUID _uuid = null;
+   private UUID _suspect = null;
    private int _distance = FollowConfig.getInstance().getFollowDistance();
    private final long beginTime = System.currentTimeMillis();
    private long lastUpdate = 0L;
 
-   public Stalker(String name, String suspect, int distance) {
-      this._name = name;
+   public Stalker(UUID uuid, UUID suspect, int distance) {
+      this._uuid = uuid;
       this._suspect = suspect;
       this._distance = distance > 0?(distance < this._maxDistance?distance:this._maxDistance):1;
    }
 
-   public String getName() {
-      return this._name;
+   public UUID getUUID() {
+      return this._uuid;
    }
 
-   public String getSuspectName() {
+   public UUID getSuspectUUID() {
       return this._suspect;
    }
 

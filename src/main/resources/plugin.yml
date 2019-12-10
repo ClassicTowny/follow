@@ -1,40 +1,36 @@
 name: Follow
 main: me.zathrasnottheone.follow.Follow
-version: 0.7-beta1
-author: ZathrasNotTheOne
+version: 0.7
+author: ZathrasNotTheOne, DrkMatr1984
 website: http://dev.bukkit.org/server-mods/follow/
 prefix: Follow
 description: Follow.  Keep an eye on a player at all times.
 commands: 
    follow:
       description: Follow a player.
-      usage: /follow [player [distance]] | stop | list | closer | farther | reload | help
-      permission: follow.access
+      usage: /follow [player [distance]] | stop | closer | farther | help
+      permission: follow.player
       permission-message: You aren't permitted to use this command.
-      aliases: spy
+      aliases: foll, fo
    unfollow:
       description: Stop following a player.
       usage: /unfollow
-      permission: follow.access
+      permission: follow.player
       permission-message: You aren't permitted to use this command.
-      aliases: unspy
+      aliases: unf, unfoll
 permissions:
-    follow.*:
-        description: use all follow permissions
-        children:
-            follow.access: true
-            follow.list: true
-            follow.player: true
-    follow.access:
-        description: use the follow command
-        default: op
-    follow.list:
-        description: list the followers and followed
-        default: op
     follow.player: 
         description: follow another player
         default: op
-    follow.reload: 
+    follow.op.*
+        description: use all op follow permissions
+        children:
+            follow.op.list: true
+            follow.op.reload: true
+    follow.op.list:
+        description: list the followers and followed
+        default: op   
+    follow.op.reload: 
         description: reload the follow config
         default: op
 

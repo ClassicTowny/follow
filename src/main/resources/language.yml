@@ -1,0 +1,13 @@
+messages:
+  follow: "&4You &6are now following &f%suspect% &6at distance &3%distance%."
+  notstalkerconsole: "Sender, %sender%, was not in the stalker's list."
+  notstalker: "&4Couldn't find you in the stalker list!"
+  notingame: "&6%sender% can not change follow distance - must be in-game to follow."
+  nearestplayer: "&6Targeting nearest player: &f%suspect%"
+  reload: "&6Config Reloaded."
+  reloadconsole: "%sender% reloaded the config."
+noperms:
+  list: "&6You do not have list permission.&r"
+  reload: "&6You do not have reload permission.&r"
+  follow: "&6You do not have permission to follow another player.&r"
+  

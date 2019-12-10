@@ -20,15 +20,6 @@
 # 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # 
-# significantDistance (default value is 0.1999)
-# The distance the followed player needs to move to trigger a relocation.
-# Number of meters expressed as a floating point.
-# Normal values will be between 0.10 and 0.22 (walking ~ 0.205 per update, YMMV).
-# Small numbers will cause allow you to catch slow walk or sneaking.
-# Larger numbers will allow you to ignore small changes, catch teleports and falling.
-# 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# 
 # rotateHead (default value is false)
 # Specifies whether you want to always move follower's head to face the followed player.
 # This applies to the time within cool down period when followed player is still moving.
@@ -36,7 +27,15 @@
 # False means just stand still until the cool down period is expired.
 # 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# 
+# suspectCanFollow (default value is true)
+# Specifies whether you want to allow suspects who are being followed to also follow
+# other players.
+# True means that a player being followed may follow other players.
+# False means that a suspect player may not follow other players while being followed himself/herself.
+# 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 followDistance: 7
 coolDown: 2
-significantDistance: 0.1999
 rotateHead: false
+suspectCanFollow: true

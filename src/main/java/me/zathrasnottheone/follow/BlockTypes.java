@@ -55,8 +55,10 @@ public class BlockTypes
 	    JUNGLE_PRESSURE_PLATE,
 	    OAK_PRESSURE_PLATE,
 	    SPRUCE_PRESSURE_PLATE,
-	    STONE_PRESSURE_PLATE
-	    //Add wall torches, etc
+	    STONE_PRESSURE_PLATE,
+	    WALL_TORCH,
+	    REDSTONE_WALL_TORCH
+	    
 	}
 	
 	public enum Slabs

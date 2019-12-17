@@ -95,7 +95,7 @@ public class PlayerListener implements Listener {
    public void onPlayerLogout(PlayerQuitEvent e) {
       if(!FollowRoster.getInstance().getStalkersForSuspect(e.getPlayer()).isEmpty())
     	  for(Stalker stalker : FollowRoster.getInstance().getStalkersForSuspect(e.getPlayer()))
-    		  Bukkit.getPlayer(stalker.getUUID()).sendMessage(ChatColor.GOLD + "You are no longer following " + ChatColor.WHITE + e.getPlayer().getName());
+    		  Bukkit.getPlayer(stalker.getUUID()).sendMessage(ChatColor.translateAlternateColorCodes('&', _plugin.getLang().prefix + _plugin.getLang().unfollow.replace("%suspect%", e.getPlayer().getName())));
       FollowRoster.getInstance().remove(e.getPlayer());
    }
 
@@ -130,7 +130,7 @@ public class PlayerListener implements Listener {
                       this.rotateStalker(stalkingPlayer, suspectPlayer, to);
                   }
                   if(s.getAge() % 60 == 0) {
-                     this._logger.info(Bukkit.getOfflinePlayer(s.getUUID()) + " has been following " + (Bukkit.getOfflinePlayer(s.getSuspectUUID())).getName() + " for " + s.getAge() / 60 + " minutes.");
+                     this._logger.info(ChatColor.stripColor((((_plugin.getLang().followtime).replace("%stalker%", Bukkit.getOfflinePlayer(s.getUUID()).getName())).replace("%suspect%", (Bukkit.getOfflinePlayer(s.getSuspectUUID())).getName())).replace("%minutes%", (Integer.valueOf(s.getAge() / 60)).toString())));
                   }
                }
             }

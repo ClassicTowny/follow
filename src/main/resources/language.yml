@@ -1,13 +1,30 @@
+prefix: "&8[&2Follow&8] &r"
 messages:
   follow: "&4You &6are now following &f%suspect% &6at distance &3%distance%."
+  followconsole: "%stalker% is now following %suspect% at a distance of %distance%."
   notstalkerconsole: "Sender, %sender%, was not in the stalker's list."
   notstalker: "&4Couldn't find you in the stalker list!"
   notingame: "&6%sender% can not change follow distance - must be in-game to follow."
-  nearestplayer: "&6Targeting nearest player: &f%suspect%"
+  nearestplayer: "&6Targeting nearest player: &f%suspect%&6."
+  notonlineplayer: "&f%suspect% &6is not an online player."
+  nofollowself: "&6You can't follow yourself."
+  noonetofollow: "&6There is no one to follow."
+  cantfollowifsuspect: "&6You can't follow someone while you're being followed."
+  notinteger: "&6%distance% was not a parseable integer - using a default value."
+  unfollow: "&6You are no longer following &f%suspect%&6."
+  unfollowconsole: "Sender, %sender%, is no longer following %suspect%."
+  notfollowinganyone: "Sender, %sender%, is not following anyone."
+  sentlist: "Sent %sender% the list of followers."
+  followtime: "%stalker% has been following %suspect% for %minutes% minutes."
   reload: "&6Config Reloaded."
   reloadconsole: "%sender% reloaded the config."
+  help: 
+  - "&6------------------         &8[&2Follow&8]&r         &6------------------"
+  - "&6/follow &7[&eplayer &8[&adistance&8]&7] &f|&6 stop &f|&6 closer &f|&6 farther &f|&6 help"
 noperms:
   list: "&6You do not have list permission.&r"
   reload: "&6You do not have reload permission.&r"
   follow: "&6You do not have permission to follow another player.&r"
-  
+followlist:
+  top:
+  bottom: 
